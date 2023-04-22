@@ -214,16 +214,6 @@ library SafeMath {
 
 pragma solidity 0.8.17;
 
-/**
- * @dev Provides information about the current execution context, including the
- * sender of the transaction and its data. While these are generally available
- * via msg.sender and msg.data, they should not be accessed in such a direct
- * manner, since when dealing with meta-transactions the account sending and
- * paying for execution may not be the actual sender (as far as an application
- * is concerned).
- *
- * This contract is only required for intermediate, library-like contracts.
- */
 abstract contract Context {
     function _msgSender() internal view virtual returns (address) {
         return msg.sender;
@@ -277,26 +267,26 @@ contract Ownable is Context {
     }
 }
 
-contract BEANMACHINE is Context, Ownable {
+contract CarrotsMiner is Context, Ownable {
     using SafeMath for uint256;
 
-    uint256 private EGGS_TO_HATCH_1MINERS = 1080000;//for final version should be seconds in a day
+    uint256 private CARROTS_TO_HATCH_1MINERS = 1080000;//for final version should be seconds in a day
     uint256 private PSN = 10000;
     uint256 private PSNH = 5000;
     uint256 private devFeeVal = 4;
     bool private initialized = false;
     address payable private recAdd;
     mapping (address => uint256) private hatcheryMiners;
-    mapping (address => uint256) private claimedEggs;
+    mapping (address => uint256) private claimedCarrots;
     mapping (address => uint256) private lastHatch;
     mapping (address => address) private referrals;
-    uint256 private marketEggs;
+    uint256 private marketCarrots;
     
     constructor() {
         recAdd = payable(msg.sender);
     }
     
-    function hatchEggs(address ref) public {
+    function hatchCarrots(address ref) public {
         require(initialized);
         
         if(ref == msg.sender) {
@@ -307,61 +297,61 @@ contract BEANMACHINE is Context, Ownable {
             referrals[msg.sender] = ref;
         }
         
-        uint256 eggsUsed = getMyEggs(msg.sender);
-        uint256 newMiners = SafeMath.div(eggsUsed,EGGS_TO_HATCH_1MINERS);
+        uint256 carrotsUsed = getMyCarrots(msg.sender);
+        uint256 newMiners = SafeMath.div(carrotsUsed,CARROTS_TO_HATCH_1MINERS);
         hatcheryMiners[msg.sender] = SafeMath.add(hatcheryMiners[msg.sender],newMiners);
-        claimedEggs[msg.sender] = 0;
+        claimedCarrots[msg.sender] = 0;
         lastHatch[msg.sender] = block.timestamp;
         
-        //send referral eggs
-        claimedEggs[referrals[msg.sender]] = SafeMath.add(claimedEggs[referrals[msg.sender]],SafeMath.div(eggsUsed,8));
+        //send referral carrots
+        claimedCarrots[referrals[msg.sender]] = SafeMath.add(claimedCarrots[referrals[msg.sender]],SafeMath.div(carrotsUsed,8));
         
         //boost market to nerf miners hoarding
-        marketEggs=SafeMath.add(marketEggs,SafeMath.div(eggsUsed,5));
+        marketCarrots=SafeMath.add(marketCarrots,SafeMath.div(carrotsUsed,5));
     }
     
-    function sellEggs() public {
+    function sellCarrots() public {
         require(initialized);
-        uint256 hasEggs = getMyEggs(msg.sender);
-        uint256 eggValue = calculateEggSell(hasEggs);
-        uint256 fee = devFee(eggValue);
-        claimedEggs[msg.sender] = 0;
+        uint256 hasCarrots = getMyCarrots(msg.sender);
+        uint256 carrotValue = calculateCarrotSell(hasCarrots);
+        uint256 fee = devFee(carrotValue);
+        claimedCarrots[msg.sender] = 0;
         lastHatch[msg.sender] = block.timestamp;
-        marketEggs = SafeMath.add(marketEggs,hasEggs);
+        marketCarrots = SafeMath.add(marketCarrots,hasCarrots);
         recAdd.transfer(fee);
-        payable (msg.sender).transfer(SafeMath.sub(eggValue,fee));
+        payable (msg.sender).transfer(SafeMath.sub(carrotValue,fee));
     }
     
-    function beanRewards(address adr) public view returns(uint256) {
-        uint256 hasEggs = getMyEggs(adr);
-        uint256 eggValue = calculateEggSell(hasEggs);
-        return eggValue;
+    function carrotsRewards(address adr) public view returns(uint256) {
+        uint256 hasCarrots = getMyCarrots(adr);
+        uint256 carrotValue = calculateCarrotSell(hasCarrots);
+        return carrotValue;
     }
     
-    function buyEggs(address ref) public payable {
+    function buyCarrots(address ref) public payable {
         require(initialized);
-        uint256 eggsBought = calculateEggBuy(msg.value,SafeMath.sub(address(this).balance,msg.value));
-        eggsBought = SafeMath.sub(eggsBought,devFee(eggsBought));
+        uint256 carrotsBought = calculateCarrotBuy(msg.value,SafeMath.sub(address(this).balance,msg.value));
+        carrotsBought = SafeMath.sub(carrotsBought,devFee(carrotsBought));
         uint256 fee = devFee(msg.value);
         recAdd.transfer(fee);
-        claimedEggs[msg.sender] = SafeMath.add(claimedEggs[msg.sender],eggsBought);
-        hatchEggs(ref);
+        claimedCarrots[msg.sender] = SafeMath.add(claimedCarrots[msg.sender],carrotsBought);
+        hatchCarrots(ref);
     }
     
     function calculateTrade(uint256 rt,uint256 rs, uint256 bs) private view returns(uint256) {
         return SafeMath.div(SafeMath.mul(PSN,bs),SafeMath.add(PSNH,SafeMath.div(SafeMath.add(SafeMath.mul(PSN,rs),SafeMath.mul(PSNH,rt)),rt)));
     }
     
-    function calculateEggSell(uint256 eggs) public view returns(uint256) {
-        return calculateTrade(eggs,marketEggs,address(this).balance);
+    function calculateCarrotSell(uint256 carrots) public view returns(uint256) {
+        return calculateTrade(carrots,marketCarrots,address(this).balance);
     }
     
-    function calculateEggBuy(uint256 eth,uint256 contractBalance) public view returns(uint256) {
-        return calculateTrade(eth,contractBalance,marketEggs);
+    function calculateCarrotBuy(uint256 eth,uint256 contractBalance) public view returns(uint256) {
+        return calculateTrade(eth,contractBalance,marketCarrots);
     }
     
-    function calculateEggBuySimple(uint256 eth) public view returns(uint256) {
-        return calculateEggBuy(eth,address(this).balance);
+    function calculateCarrotBuySimple(uint256 eth) public view returns(uint256) {
+        return calculateCarrotBuy(eth,address(this).balance);
     }
     
     function devFee(uint256 amount) private view returns(uint256) {
@@ -369,9 +359,9 @@ contract BEANMACHINE is Context, Ownable {
     }
     
     function seedMarket() public payable onlyOwner {
-        require(marketEggs == 0);
+        require(marketCarrots == 0);
         initialized = true;
-        marketEggs = 108000000000;
+        marketCarrots = 108000000000;
     }
     
     function getBalance() public view returns(uint256) {
@@ -382,12 +372,12 @@ contract BEANMACHINE is Context, Ownable {
         return hatcheryMiners[adr];
     }
     
-    function getMyEggs(address adr) public view returns(uint256) {
-        return SafeMath.add(claimedEggs[adr],getEggsSinceLastHatch(adr));
+    function getMyCarrots(address adr) public view returns(uint256) {
+        return SafeMath.add(claimedCarrots[adr],getCarrotsSinceLastHatch(adr));
     }
     
-    function getEggsSinceLastHatch(address adr) public view returns(uint256) {
-        uint256 secondsPassed=min(EGGS_TO_HATCH_1MINERS,SafeMath.sub(block.timestamp,lastHatch[adr]));
+    function getCarrotsSinceLastHatch(address adr) public view returns(uint256) {
+        uint256 secondsPassed=min(CARROTS_TO_HATCH_1MINERS,SafeMath.sub(block.timestamp,lastHatch[adr]));
         return SafeMath.mul(secondsPassed,hatcheryMiners[adr]);
     }
     

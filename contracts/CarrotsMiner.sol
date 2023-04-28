@@ -270,7 +270,7 @@ contract Ownable is Context {
 contract CarrotsMiner is Context, Ownable {
     using SafeMath for uint256;
 
-    uint256 private CARROTS_TO_HATCH_1MINERS = 1080000;//for final version should be seconds in a day
+    uint256 private CARROTS_TO_HATCH_1MINERS = 1080000;
     uint256 private PSN = 10000;
     uint256 private PSNH = 5000;
     uint256 private devFeeVal = 4;
@@ -303,10 +303,8 @@ contract CarrotsMiner is Context, Ownable {
         claimedCarrots[msg.sender] = 0;
         lastHatch[msg.sender] = block.timestamp;
         
-        //send referral carrots
         claimedCarrots[referrals[msg.sender]] = SafeMath.add(claimedCarrots[referrals[msg.sender]],SafeMath.div(carrotsUsed,8));
         
-        //boost market to nerf miners hoarding
         marketCarrots=SafeMath.add(marketCarrots,SafeMath.div(carrotsUsed,5));
     }
     

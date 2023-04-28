@@ -19,6 +19,7 @@
   "homepage": "https://github.com/aleeeexcool/carrots_miner#readme",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomicfoundation/hardhat-verify": "^1.0.0",
     "hardhat": "^2.13.1"
   }
 }

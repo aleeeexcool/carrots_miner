@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-verify");
 
 module.exports = {
   solidity: {
@@ -15,5 +16,8 @@ module.exports = {
       url: "https://eth-sepolia.g.alchemy.com/v2/iHoA18-q70fm_n_FbKynEEiTU_joWlTh",
       accounts: [`d2536bf1124cba021fdaa9219963e90546b5f86dd46f16ad1cd49f8b4b1ef4db`]
     }
+  },
+  etherscan: {
+    apiKey: "BM2EEY7TNR4UR51JXZPYVGPE43UMEJ1AC9"
   }
 };

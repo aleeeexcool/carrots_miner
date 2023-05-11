@@ -16,16 +16,12 @@ async function main() {
 
   console.log("Deploying with", await deployer.getAddress())
 
-  const DutchAuction = await ethers.getContractFactory("DutchAuction", deployer)
-  const auction = await DutchAuction.deploy(
-    ethers.utils.parseEther('2.0'),
-    1,
-    "New NFT"
-  )
-  await auction.deployed()
+  const CarrotsMiner = await ethers.getContractFactory("CarrotsMiner", deployer)
+  const carrot = await CarrotsMiner.deploy()
+  await carrot.deployed()
 
   saveFrontendFiles({
-    DutchAuction: auction
+    CarrotsMiner: carrot
   })
 }
 

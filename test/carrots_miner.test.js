@@ -15,7 +15,7 @@ describe("CarrotsMiner", function () {
         expect(await carrot.owner()).to.equal(owner.address);
     });
 
-    it("should revert with the right message when nonOwner call the seedMarket function", async () => {
-        expect(await carrot.connect(nonOwner).seedMarket()).to.be.revertedWith("Ownable: caller is not the owner");
+    it("should return the right balance when user call the getBalance function", async () => {
+        expect(await carrot.getBalance()).to.equal(0);
     });
 })

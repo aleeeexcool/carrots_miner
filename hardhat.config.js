@@ -1,5 +1,4 @@
 require("@nomicfoundation/hardhat-toolbox");
-require("@nomicfoundation/hardhat-verify");
 
 module.exports = {
   solidity: {
@@ -11,13 +10,13 @@ module.exports = {
         }
       }
   },
-  networks: {
-    sepolia: {
-      url: "",
-      accounts: [``]
-    }
-  },
-  etherscan: {
-    apiKey: ""
-  }
+  // networks: {
+  //   sepolia: {
+  //     url: "",
+  //     accounts: [``]
+  //   }
+  // },
+  // etherscan: {
+  //   apiKey: ""
+  // }
 };
